@@ -32,6 +32,8 @@ Ti sei loggato! <?php echo 'ID User: '.$id;?> </br>
 		 echo '>'.$row['descrizionecategoria'].'</option>';
 	}
 	echo '</select> </form>';
+	if(!isset($_GET['categoria'])) 
+		$_GET['categoria']=1;
 	$stm= $dbh->prepare('SELECT * FROM prodotti WHERE prodotti.categorie_idcategoria=:categoria');
 	$stm->bindValue(':categoria',$_GET['categoria']);
 	if($stm->execute()) {}
@@ -50,15 +52,23 @@ Ti sei loggato! <?php echo 'ID User: '.$id;?> </br>
 			'<td>'.$row['descrizioneprodotto'].'</td>'.
 			'<td>'.$row['prezzo'].'</td>'.
 			'<td> <img src="'.$row['imgprodotto'].'"/>'.'</td>'.
-			'<td> <form method="get" action=""> <input class="btn btn-default" type="submit" value="Compra subito"> <input type="hidden"  name="prodottocomprato" value="'.$row['idprodotto'].'"> <input type="hidden"  name="categoria" value="'.$_GET['categoria'].'">  </form>'.
+			'<td> <form method="get" action=""> <input class="btn btn-default" type="submit" name="compra" value="Compra subito"> <input type="hidden"  name="prodottocomprato" value="'.$row['idprodotto'].'"> <input type="hidden"  name="categoria" value="'.$_GET['categoria'].'">  </form>'.
 		'</tr> ';
 	}
 	echo '</table>  ';
-	if(isset($_GET['prodottocomprato'])) {
-		if(!array_search($_GET['prodottocomprato'],$_SESSION['carrello']))
+	if(isset($_GET['compra']) && isset($_GET['prodottocomprato'])) {
+		if(count($_SESSION['carrello'])==0)
 			array_push($_SESSION['carrello'],$_GET['prodottocomprato']);
-		for($i=0;$i<count($_SESSION['carrello']);$i++) 
-			echo $_SESSION['carrello'][$i];
+		else {
+			if(!array_search($_GET['prodottocomprato'],$_SESSION['carrello']))
+				array_push($_SESSION['carrello'],$_GET['prodottocomprato']);
+			for($i=0;$i<count($_SESSION['carrello']);$i++) 
+				echo $_SESSION['carrello'][$i];
+		}
+	}
+	else
+	{
+		unset($_GET['prodottocomprato']);
 	}
 ?>
 </body>
