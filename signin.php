@@ -20,7 +20,7 @@
 				header('Location: ./hello.php');
 			}
 			else {
-				$_SESSION['carrello'] = array();
+				$_SESSION['carrello']=Array();
 				echo 'login fallito';
 			}
 		}

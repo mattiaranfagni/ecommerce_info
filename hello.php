@@ -10,6 +10,7 @@
 	else {
 		$id=$_SESSION['idlog'];
 		$logged=$_SESSION['logged'];
+		
 	}
 	
 ?>
@@ -52,24 +53,33 @@ Ti sei loggato! <?php echo 'ID User: '.$id;?> </br>
 			'<td>'.$row['descrizioneprodotto'].'</td>'.
 			'<td>'.$row['prezzo'].'</td>'.
 			'<td> <img src="'.$row['imgprodotto'].'"/>'.'</td>'.
-			'<td> <form method="get" action=""> <input class="btn btn-default" type="submit" name="compra" value="Compra subito"> <input type="hidden"  name="prodottocomprato" value="'.$row['idprodotto'].'"> <input type="hidden"  name="categoria" value="'.$_GET['categoria'].'">  </form>'.
+			'<td> 
+				<form method="get" action=""> 
+					<input class="btn btn-default" type="submit" name="compra" value="Compra subito">
+					<input type="hidden"  name="prodottocomprato" value="'.$row['idprodotto'].'"> 
+					<input type="hidden"  name="categoria" value="'.$_GET['categoria'].'">
+				</form>'.
+			'</td>'.
 		'</tr> ';
 	}
 	echo '</table>  ';
+	
 	if(isset($_GET['compra']) && isset($_GET['prodottocomprato'])) {
-		if(count($_SESSION['carrello'])==0)
-			array_push($_SESSION['carrello'],$_GET['prodottocomprato']);
+		if(!array_search($_GET['prodottocomprato'],array_column($_SESSION['carrello'], 'prodottocomprato')))
+			array_push($_SESSION['carrello'],array('prodottocomprato'=>$_GET['prodottocomprato'],'quantita'=>1));
 		else {
-			if(!array_search($_GET['prodottocomprato'],$_SESSION['carrello']))
-				array_push($_SESSION['carrello'],$_GET['prodottocomprato']);
-			for($i=0;$i<count($_SESSION['carrello']);$i++) 
-				echo $_SESSION['carrello'][$i];
+			for($i=0; $i<count($_SESSION['carrello'][$i] [0] ) ; $i++) {
+				if($_SESSION['carrello'][$i][0] == $_GET['prodottocomprato']) {
+					$_SESSION['carrello'][$i][1] ++;
+					break;
+				}
+			}
 		}
 	}
-	else
-	{
-		unset($_GET['prodottocomprato']);
-	}
+			
+		echo $_SESSION['carrello'][0] [0];
+			print_r($_SESSION);
+	
 ?>
 </body>
 </html>
